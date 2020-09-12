@@ -16,8 +16,6 @@ io.on('connection', function(socket) {
 
       //io.sockets.emit('enviarMensaje', idSession);      //Enviar a todos los usuarios
       //io.to(idSession).emit('prueba_unic', idSession);  //Enviar a un usaurio especifico
-
-      //socket.broadcast.emit('userjoinedthechat',userNickname +" : has joined the chat ");
     });
 
     socket.on('disconnect', function() {
@@ -54,6 +52,41 @@ io.on('connection', function(socket) {
 
     socket.on('validateSession', function(idSession, password) {
       validateSession(idSession, password);
+    });
+
+    socket.on('filterUsersEmail', function(idSession, dato) {
+      if(dato != "")
+        filterUsersEmail(idSession, dato);
+    });
+
+    socket.on('filterUsersRole', function(idSession, dato) {
+      if(dato != "")
+        filterUsersRole(idSession, dato);
+    });
+
+    socket.on('filterRequestsState', function(idSession, dato) {
+      if(dato != "")
+        filterRequestsState(idSession, dato);
+    });
+
+    socket.on('filterRequestsType', function(idSession, dato) {
+      if(dato != "")
+        filterRequestsType(idSession, dato);
+    });
+
+    socket.on('filterRequestsResponsed_at', function(idSession, dato) {
+      if(dato != "")
+        filterRequestsResponsed_at(idSession, dato);
+    });
+
+    socket.on('filterRequestsCreated_at', function(idSession, dato) {
+      if(dato != "")
+        filterRequestsCreated_at(idSession, dato);
+    });
+
+    socket.on('filterRequestsSubject', function(idSession, dato) {
+      if(dato != "")
+        filterRequestsSubject(idSession, dato);
     });
 });
 
@@ -118,6 +151,55 @@ function getRequests(idSession) {
   });
 }
 
+function filterUsersEmail(idSession, email) {
+  con.query('SELECT * FROM users WHERE email = "'+email+'"', function (err, result) {
+    if (err) throw err;
+    io.to(idSession).emit('returnFilterUsersEmail', result);
+  });
+}
+
+function filterUsersRole(idSession, role) {
+  con.query('SELECT * FROM users WHERE role = "'+role+'"', function (err, result) {
+    if (err) throw err;
+    io.to(idSession).emit('returnFilterUsersRole', result);
+  });
+}
+
+function filterRequestsState(idSession, state) {
+  con.query('SELECT * FROM requests WHERE state = "'+state+'"', function (err, result) {
+    if (err) throw err;
+    io.to(idSession).emit('returnFilterRequestsState', result);
+  });
+}
+
+function filterRequestsType(idSession, type) {
+  con.query('SELECT * FROM requests WHERE type = "'+type+'"', function (err, result) {
+    if (err) throw err;
+    io.to(idSession).emit('returnFilterRequestsType', result);
+  });
+}
+
+function filterRequestsResponsed_at(idSession, responsed_at) {
+  con.query('SELECT * FROM requests WHERE responsed_at = "'+responsed_at+'"', function (err, result) {
+    if (err) throw err;
+    io.to(idSession).emit('returnFilterRequestsResponsed_at', result);
+  });
+}
+
+function filterRequestsCreated_at(idSession, created_at) {
+  con.query('SELECT * FROM requests WHERE created_at = "'+created_at+'"', function (err, result) {
+    if (err) throw err;
+    io.to(idSession).emit('returnFilterRequestsCreated_at', result);
+  });
+}
+
+function filterRequestsSubject(idSession, subject) {
+  con.query('SELECT * FROM requests WHERE subject = "'+subject+'"', function (err, result) {
+    if (err) throw err;
+    io.to(idSession).emit('returnFilterRequestsSubject', result);
+  });
+}
+
 function insertUser(email, password, role, name, idSession) {
   con.query('INSERT INTO `users`(`email`, `password`, `role`, `name`) VALUES ('+email+','+password+','+role+','+name+')', function (err, result) {
     if (err) throw err;
@@ -125,8 +207,8 @@ function insertUser(email, password, role, name, idSession) {
   });
 }
 
-function inserRequests(user_id, state, type, description, responsed_at, created_at, idSession) {
-  con.query('INSERT INTO `requests`(`user_id`, `state`, `type`, `description`, `responsed_at`, `created_at`) VALUES ('+user_id+','+state+','+type+','+description+','+responsed_at+','+created_at+')', function (err, result) {
+function inserRequests(user_id, state, type, description, responsed_at, created_at, subject, idSession) {
+  con.query('INSERT INTO `requests`(`user_id`, `state`, `type`, `description`, `responsed_at`, `created_at`, `subject`) VALUES ('+user_id+','+state+','+type+','+description+','+responsed_at+','+created_at+','+subject+')', function (err, result) {
     if (err) throw err;
     io.to(idSession).emit('returnInsertRequests', result);
   });
