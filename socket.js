@@ -88,6 +88,11 @@ io.on('connection', function(socket) {
       if(dato != "")
         filterRequestsSubject(idSession, dato);
     });
+
+    socket.on('filterRequestsUser', function(idSession, dato) {
+      if(dato != "")
+        filterRequestsUser(idSession, dato);
+    });
 });
 
 server.listen(4011,()=>{
@@ -197,6 +202,13 @@ function filterRequestsSubject(idSession, subject) {
   con.query('SELECT * FROM requests WHERE subject = "'+subject+'"', function (err, result) {
     if (err) throw err;
     io.to(idSession).emit('returnFilterRequestsSubject', result);
+  });
+}
+
+function filterRequestsUser(idSession, user_id) {
+  con.query('SELECT * FROM requests WHERE user_id = "'+subjeuser_idct+'"', function (err, result) {
+    if (err) throw err;
+    io.to(idSession).emit('returnFilterRequestsUser', result);
   });
 }
 
